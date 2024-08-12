@@ -1,20 +1,30 @@
 // In App.js in a new project
 
 import * as React from "react";
-import { View, Text, Button, TextInput } from "react-native";
+import { View, Text, Button, TextInput, Image } from "react-native";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { useNavigation } from "@react-navigation/native";
 
 function HomeScreen({ route }: { route: any }) {
   const navigation: any = useNavigation();
+  const [count, setCount] = React.useState(0);
+
+  React.useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button onPress={() => setCount((c) => c + 1)} title="Update count" />
+      ),
+    });
+  }, [navigation]);
+
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Button
-        title="Create post"
-        onPress={() => navigation.navigate("CreatePost")}
-      />
-      <Text style={{ margin: 10 }}>Post: {route.params?.post}</Text>
+    <View
+      style={{ flex: 1, alignItems: "center", justifyContent: "flex-start" }}
+    >
+      <Text style={{ marginTop: 30, fontSize: 30 }}>Count: {count}</Text>
+      <Button title="Details" onPress={() => navigation.navigate("Details")} />
+      {/* <Text style={{ margin: 10 }}>Post: {route.params?.post}</Text> */}
     </View>
   );
 }
@@ -89,11 +99,43 @@ function CreatePostScreen({
 
 const Stack = createNativeStackNavigator();
 
+function LogoTitle() {
+  return (
+    <Image
+      style={{ width: 40, height: 40 }}
+      source={require("../assets/react-logo.png")}
+    />
+  );
+}
+
 function App() {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Details" component={DetailsScreen} />
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{
+          title: "My home",
+          headerTitle: () => <LogoTitle />,
+
+          // headerStyle: {
+          //   backgroundColor: "#f4511e",
+          // },
+          // headerTintColor: "#fff",
+          // headerTitleStyle: {
+          //   fontWeight: "bold",
+          // },
+          headerRight: () => <Button title="Update count" color="#00cc00" />,
+        }}
+      />
+      <Stack.Screen
+        name="Details"
+        component={DetailsScreen}
+        options={{
+          headerBackTitle: "Custom Back",
+          headerBackTitleStyle: { fontSize: 30 },
+        }}
+      />
       <Stack.Screen name="CreatePost" component={CreatePostScreen} />
     </Stack.Navigator>
   );
